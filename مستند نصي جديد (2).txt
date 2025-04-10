@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>نظام إدارة التحصيلات | تصميم جديد</title>
+  <!-- استيراد خطوط Google -->
+  <link href="https://fonts.googleapis.com/css2?family=Almarai:wght@300;400;700;800&display=swap" rel="stylesheet">
+  <!-- استيراد Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- أيقونات Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --bg-color: #1e1e2f;
+      --card-bg: #27293d;
+      --accent: #e14eca;
+      --accent-dark: #ba54f5;
+      --accent-light: #ff8dd5;
+      --text-primary: #ffffff;
+      --text-secondary: #9a9a9a;
+      --success: #00f2c3;
+      --warning: #ff8d72;
+      --danger: #fd5d93;
+      --info: #1d8cf8;
+      --border-radius: 6px;
+    }
+    body {
+      font-family: 'Almarai', sans-serif;
+      background: var(--bg-color);
+      color: var(--text-primary);
+      line-height: 1.6;
+      margin: 0;
+      padding: 0;
+    }
+    .sidebar {
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: 260px;
+      height: 100vh;
+      background: linear-gradient(0deg, #3a1c71, #d76d77, #ffaf7b);
+      z-index: 100;
+      padding-top: 20px;
+      transition: all 0.3s;
+      overflow-y: auto;
+    }
+    .sidebar-brand {
+      padding: 10px 25px;
+      margin-bottom: 30px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    .sidebar-brand h3 {
+      font-weight: 700;
+      margin: 0;
+      color: white;
+      font-size: 1.2rem;
+    }
+    .sidebar-brand p {
+      font-size: 0.8rem;
+      margin: 0;
+      color: rgba(255,255,255,0.7);
+    }
+    .sidebar-menu {
+      padding: 0 15px;
+      list-style: none;
+    }
+    .sidebar-menu li {
+      margin-bottom: 10px;
+    }
+    .sidebar-menu a {
+      display: block;
+      padding: 12px 20px;
+      color: rgba(255,255,255,0.8);
+      text-decoration: none;
+      border-radius: var(--border-radius);
+      transition: all 0.3s;
+    }
+    .sidebar-menu a:hover,
+    .sidebar-menu a.active {
+      background: rgba(255,255,255,0.1);
+      color: white;
+    }
+    .sidebar-menu a i {
+      margin-left: 10px;
+      width: 20px;
+      text-align: center;
+    }
+    .main-content {
+      margin-right: 260px;
+      padding: 20px;
+      transition: all 0.3s;
+    }
+    @media (max-width: 992px) {
+      .sidebar {
+        transform: translateX(260px);
+      }
+      .sidebar.show {
+        transform: translateX(0);
+      }
+      .main-content {
+        margin-right: 0;
+      }
+    }
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 0;
+      margin-bottom: 20px;
+    }
+    .toggle-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-primary);
+      font-size: 1.5rem;
+      cursor: pointer;
+      display: none;
+    }
+    @media (max-width: 992px) {
+      .toggle-btn {
+        display: block;
+      }
+    }
+    .user-info {
+      display: flex;
+      align-items: center;
+    }
+    .user-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--accent);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      margin-left: 10px;
+    }
+    .user-name {
+      font-size: 0.9rem;
+      margin: 0;
+    }
+    .user-role {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      margin: 0;
+    }
+    .card {
+      background: var(--card-bg);
+      border: none;
+      border-radius: var(--border-radius);
+      box-shadow: 0 1px 20px 0 rgba(0,0,0,0.1);
+      margin-bottom: 30px;
+    }
+    .card-header {
+      background: transparent;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      padding: 15px 20px;
+    }
+    .card-title {
+      margin: 0;
+      font-size: 1.1rem;
+      color: white;
+      font-weight: 600;
+    }
+    .card-body {
+      padding: 20px;
+    }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+    .stat-card {
+      background: var(--card-bg);
+      border-radius: var(--border-radius);
+      padding: 20px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 0 20px 0 rgba(0,0,0,0.05);
+    }
+    .stat-icon {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      font-size: 3rem;
+      opacity: 0.1;
+    }
+    .stat-value {
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 5px;
+    }
+    .stat-label {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+    }
+    /* تنسيق حقول النموذج */
+    #collectionForm .form-control,
+    #collectionForm .form-select {
+      background-color: #d4edda !important;
+      color: black;
+      border: 1px solid #ccc;
+    }
+    #collectionForm .form-control:focus,
+    #collectionForm .form-select:focus {
+      border-color: var(--accent);
+      box-shadow: none;
+    }
+    .form-label {
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+      font-size: 0.9rem;
+    }
+    .input-group-text {
+      background-color: transparent;
+      border: 1px solid rgba(255,255,255,0.1);
+      color: var(--text-secondary);
+    }
+    .btn {
+      border-radius: var(--border-radius);
+      padding: 10px 20px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      transition: all 0.3s;
+    }
+    .btn-primary {
+      background: linear-gradient(to right, var(--accent-dark), var(--accent));
+      border: none;
+    }
+    .btn-primary:hover {
+      background: linear-gradient(to right, var(--accent), var(--accent-dark));
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(225,78,202,0.4);
+    }
+    .btn-success {
+      background: linear-gradient(to right, #0098f0, #00f2c3);
+      border: none;
+    }
+    .btn-success:hover {
+      background: linear-gradient(to right, #00f2c3, #0098f0);
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0,242,195,0.4);
+    }
+    .btn-danger {
+      background: linear-gradient(to right, #ff5858, #f09819);
+      border: none;
+    }
+    .btn-danger:hover {
+      background: linear-gradient(to right, #f09819, #ff5858);
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(255,88,88,0.4);
+    }
+    .btn-warning {
+      background: linear-gradient(to right, #ffaf7b, #d76d77);
+      border: none;
+      color: white;
+    }
+    .btn-warning:hover {
+      background: linear-gradient(to right, #d76d77, #ffaf7b);
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(215,109,119,0.4);
+    }
+    .btn-dark {
+      background: linear-gradient(to right, #4b6cb7, #182848);
+      border: none;
+    }
+    .btn-dark:hover {
+      background: linear-gradient(to right, #182848, #4b6cb7);
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(24,40,72,0.4);
+    }
+    .btn-sm {
+      padding: 5px 15px;
+      font-size: 0.8rem;
+    }
+    /* تنسيق الجدول بحيث تكون الحدود واضحة بخط أسود غامق */
+    table {
+      border: 2px solid #000;
+      border-collapse: collapse;
+    }
+    table th, table td {
+      border: 2px solid #000;
+    }
+  </style>
+</head>
+<body>
+  <!-- الشريط الجانبي -->
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <h3><i class="fas fa-coins me-2"></i> نظام التحصيلات</h3>
+      <p>شركة النفط الصافي</p>
+    </div>
+    <ul class="sidebar-menu">
+      <li>
+        <a href="#dashboard" class="active">
+          <i class="fas fa-tachometer-alt"></i> لوحة التحكم
+        </a>
+      </li>
+      <li>
+        <a href="#add-collection">
+          <i class="fas fa-plus-circle"></i> إضافة تحصيل
+        </a>
+      </li>
+      <li>
+        <a href="#records">
+          <i class="fas fa-history"></i> سجل التحصيلات
+        </a>
+      </li>
+      <li>
+        <a href="#reports">
+          <i class="fas fa-chart-bar"></i> التقارير
+        </a>
+      </li>
+      <li>
+        <a href="#settings">
+          <i class="fas fa-cog"></i> الإعدادات
+        </a>
+      </li>
+      <li>
+        <a href="#about" class="mt-5 text-center">
+          <i class="fas fa-info-circle"></i> حول النظام
+        </a>
+      </li>
+    </ul>
+  </div>
+  <!-- المحتوى الرئيسي -->
+  <div class="main-content" id="main-content">
+    <!-- الشريط العلوي -->
+    <div class="topbar">
+      <button class="toggle-btn" id="toggleSidebar"><i class="fas fa-bars"></i></button>
+      <div class="user-info">
+        <div class="user-avatar"><i class="fas fa-user"></i></div>
+        <div>
+          <p class="user-name">حسن حسين محمد</p>
+          <p class="user-role">مدير النظام</p>
+        </div>
+      </div>
+    </div>
+    <!-- مساحة التنبيهات -->
+    <div id="alertsContainer"></div>
+    <!-- الجزء الإحصائي -->
+    <div class="stats-grid">
+      <div class="stat-card fancy-border">
+        <i class="fas fa-coins stat-icon"></i>
+        <div class="stat-value" id="totalRevenue">0 ر.س</div>
+        <div class="stat-label">إجمالي الإيرادات</div>
+      </div>
+      <div class="stat-card fancy-border">
+        <i class="fas fa-cash-register stat-icon"></i>
+        <div class="stat-value" id="totalDeposits">0 ر.س</div>
+        <div class="stat-label">إجمالي الإيداعات</div>
+      </div>
+      <div class="stat-card fancy-border">
+        <i class="fas fa-chart-line stat-icon"></i>
+        <div class="stat-value" id="totalDeficit">0 ر.س</div>
+        <div class="stat-label">إجمالي العجز</div>
+      </div>
+      <div class="stat-card fancy-border">
+        <i class="fas fa-plus stat-icon"></i>
+        <div class="stat-value" id="totalSurplus">0 ر.س</div>
+        <div class="stat-label">إجمالي الزيادة</div>
+      </div>
+    </div>
+    <!-- نموذج إدخال تحصيل جديد -->
+    <div class="card" id="add-collection">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="card-title"><i class="fas fa-plus-circle me-2"></i> إدخال تحصيل جديد</h5>
+      </div>
+      <div class="card-body">
+        <form id="collectionForm">
+          <div class="row mb-4">
+            <div class="col-md-3 mb-3">
+              <label class="form-label">التاريخ</label>
+              <div class="input-group">
+                <input type="date" id="transactionDate" class="form-control" required>
+                <span class="input-group-text"><i class="fas fa-calendar-alt"></i></span>
+              </div>
+            </div>
+            <div class="col-md-3 mb-3">
+              <label class="form-label">اليوم</label>
+              <div class="input-group">
+                <input type="text" id="transactionDay" class="form-control" readonly placeholder="يتم تحديده تلقائياً">
+                <span class="input-group-text"><i class="fas fa-clock"></i></span>
+              </div>
+            </div>
+            <div class="col-md-3 mb-3">
+              <label class="form-label">اسم المحطة</label>
+              <select id="stationName" class="form-select" required>
+                <option value="">اختر المحطة</option>
+                <option value="الوسم المتالق">1- الوسم المتالق</option>
+                <option value="الماجـــــــــــد">2- الماجـــــــــــد</option>
+                <option value="الصالحية">3- الصالحية</option>
+                <option value="المكرونــــــة">4- المكرونــــــة</option>
+                <option value="سمـــا ديارى">5- سمـــا ديارى</option>
+              </select>
+            </div>
+            <div class="col-md-3 mb-3">
+              <label class="form-label">اسم المحصل</label>
+              <select id="collectorName" class="form-select" required>
+                <option value="">اختر المحصل</option>
+                <option value="حسن حسين محمد">1- حسن حسين محمد</option>
+                <option value="عادل المنتزهات">2- عادل المنتزهات</option>
+                <option value="محمد رزاز">3- محمد رزاز</option>
+                <option value="احمد حسن">4- احمد حسن</option>
+              </select>
+            </div>
+          </div>
+          <div class="row mb-4">
+            <div class="col-md-4 mb-3">
+              <label class="form-label">الإيراد الفعلي</label>
+              <div class="input-group">
+                <input type="number" id="actualRevenue" class="form-control" min="0" step="0.01" required>
+                <span class="input-group-text">ر.س</span>
+              </div>
+            </div>
+            <div class="col-md-4 mb-3">
+              <label class="form-label">سداد العهدة</label>
+              <div class="input-group">
+                <input type="number" id="repayment" class="form-control" min="0" step="0.01">
+                <span class="input-group-text">ر.س</span>
+              </div>
+            </div>
+            <div class="col-md-4 mb-3">
+              <label class="form-label">الإيداع الفعلي</label>
+              <div class="input-group">
+                <input type="number" id="actualDeposit" class="form-control" min="0" step="0.01" required>
+                <span class="input-group-text">ر.س</span>
+              </div>
+            </div>
+          </div>
+          <div class="row mb-4">
+            <div class="col-md-6 mb-3">
+              <label class="form-label">إجمالي التحصيل</label>
+              <div class="input-group">
+                <input type="number" id="totalCollection" class="form-control" readonly>
+                <span class="input-group-text">ر.س</span>
+              </div>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label">العجز والزيادة</label>
+              <div class="input-group">
+                <input type="number" id="balanceStatus" class="form-control" readonly>
+                <span class="input-group-text">ر.س</span>
+              </div>
+              <small id="balanceText" class="form-text"></small>
+            </div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">ملاحظات</label>
+            <textarea id="notes" class="form-control" rows="3"></textarea>
+          </div>
+          <div class="d-flex justify-content-center gap-2 mt-4">
+            <button type="submit" class="btn btn-primary">
+              <i class="fas fa-save me-2"></i> حفظ التحصيل
+            </button>
+            <button type="reset" class="btn btn-warning">
+              <i class="fas fa-undo me-2"></i> إعادة تعيين
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+    <!-- جدول السجلات -->
+    <div class="card" id="records">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="card-title">
+          <i class="fas fa-history me-2"></i> سجل التحصيلات
+        </h5>
+        <div class="d-flex gap-2">
+          <button class="btn btn-sm btn-primary" onclick="exportToCSV()">
+            <i class="fas fa-file-export me-1"></i> تصدير
+          </button>
+          <button class="btn btn-sm btn-danger" onclick="deleteAll()">
+            <i class="fas fa-trash me-1"></i> حذف الكل
+          </button>
+        </div>
+      </div>
+      <div class="card-body p-0">
+        <div id="noData" class="text-center py-5">
+          <i class="fas fa-database fa-3x mb-3"></i>
+          <h5>لا توجد سجلات</h5>
+          <p class="text-muted">قم بإضافة تحصيل جديد من خلال النموذج أعلاه</p>
+        </div>
+        <div class="table-responsive">
+          <table class="table table-bordered table-striped table-hover d-none" id="recordsTable">
+            <thead>
+              <tr>
+                <th>مسلسل</th>
+                <th>التاريخ</th>
+                <th>اليوم</th>
+                <th>اسم المحطة</th>
+                <th>اسم المحصل</th>
+                <th>الإيراد الفعلي</th>
+                <th>سداد العهدة</th>
+                <th>الإيداع الفعلي</th>
+                <th>إجمالي التحصيل</th>
+                <th>العجز</th>
+                <th>الزيادة</th>
+                <th>ملاحظات</th>
+                <th>الإجراءات</th>
+              </tr>
+            </thead>
+            <tbody id="tableBody">
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <!-- تذييل الصفحة -->
+    <footer class="text-center mt-5 mb-3">
+      <p>© 2025 شركة النفط الصافي - كل الحقوق محفوظة</p>
+      <p>المطور: حسن حسين محمد | الهاتف: 009660570398834 | البريد: hassanhassein2@gmail.com</p>
+    </footer>
+  </div>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      let records = JSON.parse(localStorage.getItem('records')) || [];
+
+      // تحديث الإحصائيات العامة
+      function updateStats() {
+        let sumRevenue = 0, sumDeficit = 0, sumSurplus = 0;
+        records.forEach(record => {
+          sumRevenue += record.actualRevenue;
+          const balance = record.actualDeposit - record.actualRevenue;
+          if (balance < 0) {
+            sumDeficit += Math.abs(balance) - record.repayment;
+          } else {
+            sumSurplus += balance;
+          }
+        });
+        document.getElementById("totalRevenue").textContent = sumRevenue.toFixed(2) + " ر.س";
+        document.getElementById("totalDeficit").textContent = sumDeficit.toFixed(2) + " ر.س";
+        document.getElementById("totalSurplus").textContent = sumSurplus.toFixed(2) + " ر.س";
+      }
+
+      // تحديث الجدول
+      function updateRecordsUI() {
+        const tableBody = document.getElementById('tableBody');
+        const recordsTable = document.getElementById('recordsTable');
+        const noData = document.getElementById('noData');
+        tableBody.innerHTML = "";
+        if (records.length === 0) {
+          recordsTable.classList.add("d-none");
+          noData.style.display = "block";
+        } else {
+          records.forEach((record, index) => {
+            const balance = record.actualDeposit - record.actualRevenue;
+            const deficit = balance < 0 ? Math.abs(balance) - record.repayment : 0;
+            const surplus = balance > 0 ? balance : 0;
+            const row = document.createElement("tr");
+            row.innerHTML = `
+              <td>${index + 1}</td>
+              <td>${record.date}</td>
+              <td>${record.day}</td>
+              <td>${record.stationName}</td>
+              <td>${record.collectorName}</td>
+              <td>${record.actualRevenue} ر.س</td>
+              <td>${record.repayment} ر.س</td>
+              <td>${record.actualDeposit} ر.س</td>
+              <td>${record.totalCollection} ر.س</td>
+              <td>${deficit > 0 ? deficit.toFixed(2) + ' ر.س' : '-'}</td>
+              <td>${surplus > 0 ? surplus.toFixed(2) + ' ر.س' : '-'}</td>
+              <td>${record.notes || '-'}</td>
+              <td>
+                <button class="btn btn-sm btn-danger" onclick="deleteRecord(${index})">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </td>
+            `;
+            tableBody.appendChild(row);
+          });
+          recordsTable.classList.remove("d-none");
+          noData.style.display = "none";
+        }
+        updateStats();
+      }
+
+      // حساب الإجماليات والعجز والزيادة
+      function calculateTotals() {
+        const actualRevenue = +document.getElementById('actualRevenue').value || 0;
+        const repayment = +document.getElementById('repayment').value || 0;
+        const actualDeposit = +document.getElementById('actualDeposit').value || 0;
+
+        const totalCollection = actualRevenue + repayment;
+        document.getElementById('totalCollection').value = totalCollection.toFixed(2);
+
+        const balance = actualDeposit - actualRevenue;
+        if (balance < 0) {
+          const effectiveDeficit = Math.abs(balance) - repayment;
+          document.getElementById('balanceStatus').value = effectiveDeficit > 0 ? effectiveDeficit.toFixed(2) : 0;
+          document.getElementById('balanceText').innerHTML = '<span class="text-danger"><i class="fas fa-exclamation-circle me-1"></i> يوجد عجز</span>';
+        } else {
+          document.getElementById('balanceStatus').value = balance.toFixed(2);
+          document.getElementById('balanceText').innerHTML = '<span class="text-success"><i class="fas fa-check-circle me-1"></i> يوجد زيادة</span>';
+        }
+      }
+
+      // عند إرسال النموذج
+      document.getElementById('collectionForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+        const date = document.getElementById('transactionDate').value;
+        const day = document.getElementById('transactionDay').value;
+        const stationName = document.getElementById('stationName').value;
+        const collectorName = document.getElementById('collectorName').value;
+        const actualRevenue = +document.getElementById('actualRevenue').value;
+        const repayment = +document.getElementById('repayment').value || 0;
+        const actualDeposit = +document.getElementById('actualDeposit').value;
+        const totalCollection = actualRevenue + repayment;
+        const notes = document.getElementById('notes').value;
+
+        const balance = actualDeposit - actualRevenue;
+        const deficit = balance < 0 ? Math.abs(balance) - repayment : 0;
+        const surplus = balance > 0 ? balance : 0;
+
+        const record = {
+          date,
+          day,
+          stationName,
+          collectorName,
+          actualRevenue,
+          repayment,
+          actualDeposit,
+          totalCollection,
+          deficit,
+          surplus,
+          notes
+        };
+
+        records.push(record);
+        localStorage.setItem('records', JSON.stringify(records));
+        updateRecordsUI();
+        this.reset();
+        calculateTotals();
+      });
+
+      window.deleteRecord = function (index) {
+        if (confirm("هل أنت متأكد من حذف هذا السجل؟")) {
+          records.splice(index, 1);
+          localStorage.setItem('records', JSON.stringify(records));
+          updateRecordsUI();
+        }
+      };
+
+      window.exportToCSV = function () {
+        if (records.length === 0) {
+          alert("لا توجد سجلات لتصديرها.");
+          return;
+        }
+        let csvContent = "\ufeff";
+        csvContent += "مسلسل,التاريخ,اليوم,اسم المحطة,اسم المحصل,الإيراد الفعلي,سداد العهدة,الإيداع الفعلي,إجمالي التحصيل,العجز,الزيادة,ملاحظات\n";
+        records.forEach((record, index) => {
+          csvContent += `${index + 1},"${record.date}","${record.day}","${record.stationName}","${record.collectorName}",${record.actualRevenue},${record.repayment},${record.actualDeposit},${record.totalCollection},${record.deficit},${record.surplus},"${record.notes}"\n`;
+        });
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", "records.csv");
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      };
+
+      window.deleteAll = function () {
+        if (confirm("هل أنت متأكد من حذف جميع السجلات؟")) {
+          records = [];
+          localStorage.setItem('records', JSON.stringify(records));
+          updateRecordsUI();
+        }
+      };
+
+      // تحديث واجهة المستخدم عند بدء التشغيل
+      updateRecordsUI();
+
+      // حساب الإجماليات عند تغيير القيم
+      document.querySelectorAll('#actualRevenue, #repayment, #actualDeposit')
+        .forEach(input => input.addEventListener('input', calculateTotals));
+
+      // تحديد اليوم تلقائياً عند اختيار التاريخ
+      document.getElementById('transactionDate').addEventListener('change', function () {
+        if (this.value) {
+          const inputDate = new Date(this.value);
+          const day = inputDate.getDate().toString().padStart(2, '0');
+          const month = (inputDate.getMonth() + 1).toString().padStart(2, '0');
+          const year = inputDate.getFullYear();
+          document.getElementById('transactionDay').value = `${day}/${month}/${year}`;
+        } else {
+          document.getElementById('transactionDay').value = "";
+        }
+      });
+    });
+  </script>
+</body>
+</html>
